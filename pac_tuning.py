@@ -215,10 +215,6 @@ if __name__ == "__main__":
     parser.add_argument("--num_labels", type=int, default=2)
     parser.add_argument('--representation_dim', type=int, default=768)
     parser.add_argument("--stage1_epochs", default=200, type=int, help="The number of epochs for stage 1.")
-    parser.add_argument("--K", default=0.03, type=float, help="The default k for loss 2.")
-    parser.add_argument("--OPTIM", default='ADAMW', type=str)
-    parser.add_argument("--method", default="ours", type=str)
-    parser.add_argument('--representation_dims', default=768, type=int)
     parser.add_argument('--model', default='bert-base-uncased', type=str)  # gpt2
 
     args = parser.parse_args()
