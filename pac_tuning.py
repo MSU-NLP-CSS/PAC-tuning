@@ -85,10 +85,10 @@ def pac_tuning(args):
     if args.model == 'bert-base-uncased':
         model = bert_clf(args).to(args.device)
 
-        tokenizer = BertTokenizer.from_pretrained(args.model_name, local_files_only=False)
+        tokenizer = BertTokenizer.from_pretrained(args.model, local_files_only=False)
     else:
         model = gpt2_clf(args).to(args.device)
-        tokenizer = GPT2Tokenizer.from_pretrained(args.model_name, local_files_only=False)
+        tokenizer = GPT2Tokenizer.from_pretrained(args.model, local_files_only=False)
         tokenizer.pad_token = tokenizer.eos_token
 
     freeze_embedding(model)
@@ -180,9 +180,9 @@ def pac_tuning(args):
             if True:  # epoch >= args.shift - 1:
                 valid_performance = get_test_performance(args, tokenizer, args.test_data, model)
 
-                print("task:{}\tseed:{}\tepoch:{}\tvalid_performance:{}\tmethod:{}\tmodel:{}\tmodel_name:{}".format(
+                print("task:{}\tseed:{}\tepoch:{}\tvalid_performance:{}\tmethod:{}\tmodel:{}\tmodel:{}".format(
                     args.task_name, args.seed, epoch,
-                    valid_performance, args.method, args.model, args.model_name))
+                    valid_performance, args.method, args.model, args.model))
 
 
 
