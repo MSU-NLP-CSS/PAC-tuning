@@ -19,5 +19,5 @@ python pac_tuning.py  --num_labels 2
                       --model bert-base-uncased
 ```
 
-**Note**
+### Note
 It is better to have a larger batch size for PAC-tuning a Pretrained Languge Model on downstream classification tasks.
