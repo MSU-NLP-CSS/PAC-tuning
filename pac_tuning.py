@@ -201,7 +201,6 @@ if __name__ == "__main__":
                         help="random seed for initialization")
     parser.add_argument('--beta1', type=float, default=0.9)
     parser.add_argument('--beta2', type=float, default=0.999)
-    parser.add_argument("--pair_input", type=str, default="False")
     parser.add_argument("--INPUT_IDS", type=str, default='input_ids')
     parser.add_argument("--ATTENTION_MASK", type=str, default='attention_mask')
     parser.add_argument("--TOKEN_TYPE_IDS", type=str, default="token_type_ids")
