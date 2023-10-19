@@ -236,6 +236,7 @@ if __name__ == "__main__":
     parser.add_argument("--train_data", type=str, default="data/SST/train.txt")
     parser.add_argument("--valid_data", type=str, default="data/SST/dev.txt")
     parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--train_size",type=int,default=100)
     parser.add_argument("--num_labels", type=int, default=2)
     parser.add_argument('--representation_dim', type=int, default=768)
     parser.add_argument("--shift", default=50, type=int, help="The number of epochs to shift to noise injection.")
