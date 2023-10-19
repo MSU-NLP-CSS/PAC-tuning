@@ -12,11 +12,6 @@ from utils import *
 
 transformers.logging.set_verbosity_error()
 
-def frezee_pretrain(model):
-    for n, p in model.named_parameters():
-        if 'embed' in n.lower() or 'bert' in n.lower():
-            p.requires_grad = False
-
 def freeze_embedding(model):
     for n, p in model.named_parameters():
         if 'embed' in n or "wpe.weight" in n or 'wte.weight' in n:
