@@ -82,7 +82,7 @@ def get_test_performance(args, tokenizer, data_path, model):
 
 def pac_tuning(args):
     set_seed(args)
-    if args.model == 'bert':
+    if args.model == 'bert-base-uncased':
         model = bert_clf(args).to(args.device)
 
         tokenizer = BertTokenizer.from_pretrained(args.model_name, local_files_only=False)
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     parser.add_argument("--method", default="ours", type=str)
     parser.add_argument("--refine_gamma", default=0, type=int)
     parser.add_argument('--representation_dims', default=768, type=int)
-    parser.add_argument('--model', default='bert', type=str)  # gpt2
+    parser.add_argument('--model', default='bert-base-uncased', type=str)  # gpt2
 
     args = parser.parse_args()
 

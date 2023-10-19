@@ -211,6 +211,15 @@ def gen_output_transformer(args, model, tokenizer, prior, dataset, n):
             error_mean_list.append(np.mean(errors))
     return error_list, error_mean_list
 
+def fun_K_auto(x, exp_prior_list, K_list):
+    n = len(exp_prior_list)
+    y = K_list[0] + torch.relu(x - exp_prior_list[0]) * (K_list[1] - K_list[0]) / (
+            exp_prior_list[1] - exp_prior_list[0])
+    slope = (K_list[1] - K_list[0]) / (exp_prior_list[1] - exp_prior_list[0])
+    for i in range(n - 2):
+        slope = -slope + (K_list[i + 2] - K_list[i + 1]) / (exp_prior_list[i + 2] - exp_prior_list[i + 1])
+        y += torch.relu(x - exp_prior_list[i + 1]) * slope
+    return y
 
 def compute_K_sample_transformer(args, model, tokenizer, dataset, min_gamma, max_gamma):
     def est_K(prior, x):
