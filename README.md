@@ -6,7 +6,7 @@ This repo is for the paper PAC-tuning: Fine-tuning Pretrained Language Models wi
 * PyTorch  
 * transformers
 
-To run PAC-tuning:
+## To run PAC-tuning:
 ```
 python pac_tuning.py  --num_labels 2 
                       --task_name SST 
