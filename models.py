@@ -34,8 +34,6 @@ class bert_clf(nn.Module):
                                 attention_mask=attention_mask.squeeze())
         cls = last_hidden[0][:, 0, :].to(self.args.device)
 
-        if self.args.method != "ours":
-            cls = self.dropout(cls).to(self.args.device)
         logits = self.out(cls).to(self.args.device)
         # print(logits.size())
         loss = self.cross_entropy(logits, labels)
@@ -89,8 +87,6 @@ class gpt2_clf(nn.Module):
                                 attention_mask=attention_mask.squeeze())
         last_hidden = last_hidden.last_hidden_state
         cls = last_hidden[:, -1, :].to(self.args.device)
-        if self.args.method != "ours":
-            cls = self.dropout(cls).to(self.args.device)
 
         logits = self.out(cls).to(self.args.device)
         # print(logits.size())
