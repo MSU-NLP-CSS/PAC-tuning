@@ -12,7 +12,6 @@ torch.cuda.empty_cache()
 transformers.logging.set_verbosity_error()
 
 
-
 class bucket_dataset(Dataset):
     def __init__(self, args, tokenizer, source_data_file, target_data_file=None, need_shuffle=False, size=None):
         super(bucket_dataset, self).__init__()
@@ -42,7 +41,7 @@ class bucket_dataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        return text2ids(self.args,self.tokenizer,self.data[idx])
+        return text2ids(self.args, self.tokenizer, self.data[idx])
 
 
 def text2ids(args, tokenizer, input):
@@ -87,4 +86,3 @@ def text2ids(args, tokenizer, input):
     encodings[args.LABEL] = torch.from_numpy(np.array(label)).to(args.device)
 
     return encodings
-

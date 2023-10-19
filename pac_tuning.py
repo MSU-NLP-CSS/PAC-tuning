@@ -161,8 +161,8 @@ def pac_tuning(args):
         valid_performance = get_test_performance(args, tokenizer, args.valid_data, model)
 
         print("task:{}\tseed:{}\tepoch:{}\tvalid_performance:{}\tmodel:{}".format(
-                    args.task_name, args.seed, epoch,
-                    valid_performance, args.model))
+            args.task_name, args.seed, epoch,
+            valid_performance, args.model))
 
 
 if __name__ == "__main__":
