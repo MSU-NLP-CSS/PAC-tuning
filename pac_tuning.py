@@ -126,8 +126,9 @@ def pac_tuning(args):
             opt3.zero_grad()
             # noise injection and ||w-w0||^2
             wdecay = weight_decay_mulb(model, b, w0)  # weight_decay(model_copy, w0)  # weight_decay_mulb(model, b, w0)
+            """noise injection"""
             noises, noises_scaled = noise_injection(model, p)
-
+            """loss1 is the cross-entropy loss"""
             _, _, _, loss1 = model(batch)
 
             if epoch < args.stage1_epochs:
@@ -135,17 +136,17 @@ def pac_tuning(args):
                 K = fun_K_auto(torch.exp(b.mean()), prior_list, K_list)
                 gamma1_ = K ** (-1) * (2 * (kl + 10 + layers * 3) / args.train_size / 3) ** 0.5
                 gamma1 = torch.clip(gamma1_, max=max_gamma, min=min_gamma)
+                """loss2 the PAC loss"""
                 loss2 = 3 * K ** 2 * gamma1 / 2 + (kl + 10 + layers * 3) / args.train_size / gamma1
-                print(loss2.item())
             else:
-
+                """after stage 1, we have the standard PGD"""
                 loss2 = 0 * loss1
 
             loss1.mean().backward(retain_graph=True)
-
+            """update the parameters of noise in the stage 1 only"""
             if epoch < args.stage1_epochs:
                 kl_term_backward(loss2, model, p, noises)
-
+            """remove noise after computing gradient"""
             rm_injected_noises(model, noises_scaled)
 
             opt1.step()
