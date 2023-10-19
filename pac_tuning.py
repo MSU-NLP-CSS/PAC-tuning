@@ -173,16 +173,14 @@ if __name__ == "__main__":
         default="SST",
         type=str,
     )
-    parser.add_argument("--max_grad_norm", default=1.0, type=float)
-
     parser.add_argument("--lr4pretrain",
                         default=5e-5,
                         type=float,
-                        help="The initial learning rate for Adam.")
+                        help="The initial learning rate for pretrained module.")
     parser.add_argument("--lr4clf",
-                        default=1e-2,  # 1e-2
+                        default=1e-2,
                         type=float,
-                        help="The initial learning rate for Adam.")
+                        help="The initial learning rate for the adapted classification module.")
 
     parser.add_argument("--weight_decay",
                         default=1e-2,
@@ -193,6 +191,7 @@ if __name__ == "__main__":
                         default=250,
                         type=int,
                         help="Total number of training epochs to perform.")
+
     parser.add_argument("--attention_dropout", default=0.5, type=float)
 
     parser.add_argument('--seed',
@@ -210,12 +209,12 @@ if __name__ == "__main__":
     parser.add_argument("--device", default=torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu"))
     parser.add_argument("--train_data", type=str, default="data/SST/train.txt")
     parser.add_argument("--valid_data", type=str, default="data/SST/dev.txt")
-    parser.add_argument("--batch_size", type=int, default=32)
-    parser.add_argument("--train_size", type=int, default=100)
-    parser.add_argument("--num_labels", type=int, default=2)
+    parser.add_argument("--batch_size", type=int, default=100)
+    parser.add_argument("--train_size", type=int, default=100,help="the number of training samples")
+    parser.add_argument("--num_labels", type=int, default=2,help="the size of label space, e.g. 2 for sentiment analysis")
     parser.add_argument('--representation_dim', type=int, default=768)
     parser.add_argument("--stage1_epochs", default=200, type=int, help="The number of epochs for stage 1.")
-    parser.add_argument('--model', default='bert-base-uncased', type=str)  # gpt2
+    parser.add_argument('--model', default='bert-base-uncased', type=str) # gpt2
 
     args = parser.parse_args()
 
