@@ -1,18 +1,10 @@
 import torch
 import torch.nn as nn
-
-import math, os, copy
+import math, copy
 import numpy as np
-from scipy.optimize import bisect
-
-import warnings
-
 from torch.utils.data import DataLoader
-import sys
 from torch.optim import Optimizer
 from myDataLoader import bucket_dataset
-
-warnings.filterwarnings("ignore")
 
 
 def noise_injection(model, p):
