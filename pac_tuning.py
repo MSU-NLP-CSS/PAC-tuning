@@ -89,14 +89,14 @@ def pac_tuning(args):
         model = gpt2_clf(args).to(args.device)
         tokenizer = GPT2Tokenizer.from_pretrained(args.model, local_files_only=False)
         tokenizer.pad_token = tokenizer.eos_token
-
+    for n, param in model.named_parameters(): print(n)
     freeze_embedding(model)
 
     others = []
     min_gamma = 10
     max_gamma = 10
     prior_list, K_list = compute_K_sample_transformer(args, model, tokenizer, args.train_data, min_gamma, max_gamma)
-    for n, param in model.named_parameters():print(n)
+
     w0, p, layers, pretrain_dim, clf_dim, p_mean_pretrain, p_mean_clf = initialization(args, model)
     b = nn.Parameter(torch.zeros(layers, device=args.device), requires_grad=True)
     b.data[:layers - 2] += float(p_mean_pretrain)
