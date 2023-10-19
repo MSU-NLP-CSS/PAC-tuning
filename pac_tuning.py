@@ -89,7 +89,7 @@ def pac_tuning(args):
         model = gpt2_clf(args).to(args.device)
         tokenizer = GPT2Tokenizer.from_pretrained(args.model, local_files_only=False)
         tokenizer.pad_token = tokenizer.eos_token
-    for n, param in model.named_parameters(): print(n)
+    
     freeze_embedding(model)
 
     others = []
