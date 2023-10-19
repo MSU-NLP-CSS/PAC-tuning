@@ -185,9 +185,11 @@ def initialization(args, model, w0decay=1.0):
     w0_pretrain, w0_clf = [], []
     initial_dims = 0
     paramdim2mean = {}
+    model_type = args.model.split("-")[0]
     for layer, (n, param) in enumerate(model.named_parameters()):
         if not param.requires_grad: continue
-        if args.model in n:
+
+        if model_type in n:
             pretrain_dim += len(param.data.view(-1))
             w0_pretrain.append(param.data.view(-1).detach().clone())
         else:
