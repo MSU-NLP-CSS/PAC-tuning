@@ -136,7 +136,7 @@ def pac_tuning(args):
                 gamma1_ = K ** (-1) * (2 * (kl + 10 + layers * 3) / args.train_size / 3) ** 0.5
                 gamma1 = torch.clip(gamma1_, max=max_gamma, min=min_gamma)
                 loss2 = 3 * K ** 2 * gamma1 / 2 + (kl + 10 + layers * 3) / args.train_size / gamma1
-
+                print(loss2.item())
             else:
 
                 loss2 = 0 * loss1
