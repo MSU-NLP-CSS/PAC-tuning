@@ -14,9 +14,9 @@ class bert_clf(nn.Module):
         self.dropout = nn.Dropout(0.5).to(args.device)
         self.relu = nn.ReLU().to(args.device)
         self.configuration = AutoConfig.from_pretrained(args.model, local_files_only=False)
-        if args.method == "ours":
-            self.configuration.hidden_dropout_prob = 0.0
-            self.configuration.attention_probs_dropout_prob = 0.0
+
+        self.configuration.hidden_dropout_prob = 0.0
+        self.configuration.attention_probs_dropout_prob = 0.0
         self.bert = BertModel.from_pretrained(pretrained_model_name_or_path=args.model,
                                               config=self.configuration).to(args.device)
         self.bert.pooler = None
@@ -71,9 +71,9 @@ class gpt2_clf(nn.Module):
         self.dropout = nn.Dropout(0.5).to(args.device)
         self.relu = nn.ReLU().to(args.device)
         self.configuration = AutoConfig.from_pretrained(args.model, local_files_only=True)
-        if args.method == "ours":
-            self.configuration.hidden_dropout_prob = 0.0
-            self.configuration.attention_probs_dropout_prob = 0.0
+
+        self.configuration.hidden_dropout_prob = 0.0
+        self.configuration.attention_probs_dropout_prob = 0.0
         self.gpt2 = GPT2Model.from_pretrained(pretrained_model_name_or_path=args.model,
                                               config=self.configuration).to(args.device)
         self.gpt2.pooler = None

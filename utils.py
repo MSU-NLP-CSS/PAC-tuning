@@ -10,6 +10,7 @@ import warnings
 from torch.utils.data import DataLoader
 import sys
 from torch.optim import Optimizer
+
 sys.path.append('./')
 from myDataLoader import bucket_dataset
 
@@ -114,11 +115,11 @@ def kl_term_backward_mean(kl_loss, model, p, noises):
         if not param.requires_grad: continue
         t = len(param.grad.view(-1))
         g = torch.mul(grad_loss[0].view(-1), torch.exp(p.data[k:(k + t)]))
-        #print('ggggggggggggg',g.shape)
+        # print('ggggggggggggg',g.shape)
         grad_loss = grad_loss[1:]
         p.grad[k:(k + t)] += g
         p.grad[k:(k + t)] = p.grad[k:(k + t)].mean() * (torch.ones(t, device=p.device))
-        #print(float(p.grad[k:(k + t)].mean()))
+        # print(float(p.grad[k:(k + t)].mean()))
         k += t
     return
 
@@ -128,14 +129,14 @@ def get_kl_term_layer_pb(model, wdecay_mulb, p, b):
     for i, param in enumerate(model.parameters()):
         if not param.requires_grad: continue
         t = len(param.view(-1))
-        #print('b\t',float(b[j]),'p\t',float(p[k:(k+t)].mean()))
+        # print('b\t',float(b[j]),'p\t',float(p[k:(k+t)].mean()))
         KL1 += torch.exp(-2 * b[j].double()) * torch.exp(2 * (p[k:(k + t)]).double()).sum()
         KL2 += 2 * b[j].double() * t
         k += t
         j += 1
 
     KL = KL1 - (2 * (p).double().sum() - KL2 + len(p))
-    #print(float(KL1),float(KL))
+    # print(float(KL1),float(KL))
     return (KL + wdecay_mulb) / 2
 
 
@@ -213,10 +214,10 @@ def initialization(args, model, w0decay=1.0):
     # p_pretrain = nn.Parameter(torch.ones(len(w0_pretrain), device=device) * 0.1 * torch.log(w0_pretrain.abs().mean(())), requires_grad=True)
     # p_clf = nn.Parameter(torch.ones(len(w0_clf), device=device) * 0.1 * torch.log(w0_clf.abs().mean(())), requires_grad=True)
     p = nn.Parameter(torch.zeros(len(w0), device=device), requires_grad=True)
-    p.data[:pretrain_dim] += 2*torch.log(w0_pretrain.abs().mean())
+    p.data[:pretrain_dim] += 2 * torch.log(w0_pretrain.abs().mean())
     # print(p.data[:5],w0_pretrain.abs().mean(),w0.abs().mean())
-    p.data[pretrain_dim:] += 1.0*torch.log(w0_clf.abs().mean())
-    #p.data += 2.0*torch.log(w0.abs().mean())
+    p.data[pretrain_dim:] += 1.0 * torch.log(w0_clf.abs().mean())
+    # p.data += 2.0*torch.log(w0.abs().mean())
     '''
     dim_init = 0
     p_mean = []
@@ -227,7 +228,7 @@ def initialization(args, model, w0decay=1.0):
         dim_init += dim
         #print(idx,float(2.0 * torch.log(mean_value)))
         idx += 1'''
-    return w0, p, num_layer, pretrain_dim, clf_dim, p.data[0],p.data[-1]
+    return w0, p, num_layer, pretrain_dim, clf_dim, p.data[0], p.data[-1]
 
 
 def save_model(model, w0, p, epoch, prior, opt1, opt2, sch1,
@@ -397,6 +398,8 @@ def fun_K_auto_new(x, exp_prior_list, K_list):
         a = exp_prior_list[i - 1]
         b = exp_prior_list[i]
     return (b - x) / (b - a) * fa + (x - a) / (b - a) * fb
+
+
 # def resume(model, file):
 #     checkpoint = torch.load(file+'_s1.pt')
 #     model.load_state_dict(checkpoint['model_state_dict'])
@@ -573,18 +576,19 @@ class myAdam_old(Optimizer):
                 v_t = beta2 * state['exp_avg_sq'] + (1 - beta2) * torch.square(p.grad)
 
                 state['exp_avg'], state['exp_avg_sq'] = m_t, v_t
-                factor = factor * math.pow(0.9,int(state['step']/20))
-                factor = max(factor,1)
+                factor = factor * math.pow(0.9, int(state['step'] / 20))
+                factor = max(factor, 1)
                 m_t_hat = m_t / (1 - math.pow(beta1, state['step']))
                 v_t_hat = v_t / (1 - math.pow(beta2, state['step']))
 
                 p.data[:self.args.pretrain_dim] -= 0.5 * m_t_hat[:self.args.pretrain_dim] / (
-                            torch.sqrt(v_t_hat[:self.args.pretrain_dim]) + group['eps'])
-                p.data[self.args.pretrain_dim:] -= factor*self.args.lr4clf * m_t_hat[self.args.pretrain_dim:] / (
+                        torch.sqrt(v_t_hat[:self.args.pretrain_dim]) + group['eps'])
+                p.data[self.args.pretrain_dim:] -= factor * self.args.lr4clf * m_t_hat[self.args.pretrain_dim:] / (
                         torch.sqrt(v_t_hat[self.args.pretrain_dim:]) + group['eps'])
 
-
         return loss
+
+
 class myAdam(Optimizer):
     r"""Implements Adam algorithm.
     It has been proposed in `Adam: A Method for Stochastic Optimization`_.
@@ -703,16 +707,15 @@ class myAdam(Optimizer):
                 v_t = beta2 * state['exp_avg_sq'] + (1 - beta2) * torch.square(p.grad)
 
                 state['exp_avg'], state['exp_avg_sq'] = m_t, v_t
-                factor = factor * math.pow(0.9,int(state['step']/10))
-                factor = max(factor,1)
-                #print(factor*self.args.lr4clf)
+                factor = factor * math.pow(0.9, int(state['step'] / 10))
+                factor = max(factor, 1)
+                # print(factor*self.args.lr4clf)
                 m_t_hat = m_t / (1 - math.pow(beta1, state['step']))
                 v_t_hat = v_t / (1 - math.pow(beta2, state['step']))
 
                 p.data[:self.pretrain_dim] -= 0.1 * m_t_hat[:self.pretrain_dim] / (
-                            torch.sqrt(v_t_hat[:self.pretrain_dim]) + group['eps'])
-                p.data[self.pretrain_dim:] -= factor*self.args.lr4clf * m_t_hat[self.pretrain_dim:] / (
+                        torch.sqrt(v_t_hat[:self.pretrain_dim]) + group['eps'])
+                p.data[self.pretrain_dim:] -= factor * self.args.lr4clf * m_t_hat[self.pretrain_dim:] / (
                         torch.sqrt(v_t_hat[self.pretrain_dim:]) + group['eps'])
-
 
         return loss
