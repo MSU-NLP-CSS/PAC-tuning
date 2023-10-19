@@ -112,7 +112,6 @@ def pac_tuning(args):
                   weight_decay=0.0)  # AdamW([p], lr=args.lr4pretrain, weight_decay=0)
     opt3 = myAdam(args, layers - 2, [b], lr=0.5, weight_decay=0.0)
 
-    # sch1 = ReduceLROnPlateau(opt1, mode='min', factor=0.1, patience=5)
     update = 0
 
     for epoch in range(args.max_epoch):
@@ -138,51 +137,29 @@ def pac_tuning(args):
                 gamma1 = torch.clip(gamma1_, max=max_gamma, min=min_gamma)
                 loss2 = 3 * K ** 2 * gamma1 / 2 + (kl + 10 + layers * 3) / args.train_size / gamma1
 
-                if epoch % 1 == 0: print(
-                    "seed:{}\tepoch:{}\tstage1\tgamma1:{}\tkl:{}\tK:{}\tloss1:{}\tloss2:{}".format(args.seed, epoch,
-                                                                                                   gamma1_.data,
-                                                                                                   kl.item(),
-                                                                                                   K.item(),
-                                                                                                   loss1.mean().item(),
-                                                                                                   loss2.item()))
-
-            # print(gamma1)
             else:
 
                 loss2 = 0 * loss1
-                print("seed:{}\tepoch:{}\tstage2\tloss1:{}".format(args.seed, epoch, loss1.mean().item()))
 
-                # backward
             loss1.mean().backward(retain_graph=True)
-            # print('train loss:{}\tpac_loss:{}\tgamma1:{}'.format(loss1.mean().item(),loss2.item(),gamma1_.item()))
+
             if epoch < args.stage1_epochs:
-                # kl_term_backward_mean(loss2, model, p, noises)
                 kl_term_backward(loss2, model, p, noises)
 
-            # remove noises
             rm_injected_noises(model, noises_scaled)
-            # torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
+
             opt1.step()
             update += 1
 
             if epoch < args.stage1_epochs:
                 opt2.step()
-                # scheduler2.step(epoch)
                 opt3.step()
-                # scheduler3.step(epoch)
-                if epoch % 1 == 0: print(
-                    "seed:{}\tepoch:{}\tmean of p_pretrain {} mean of p_clf {}".format(args.seed, epoch, p.data[
-                                                                                                         :pretrain_dim].mean().item(),
-                                                                                       p.data[
-                                                                                       pretrain_dim:].mean().item()))
-
-                # if epoch % 20 == 0: print("valid performance:{}".format(get_test_perform2(args, tokenizer, args.test_data, model)))
 
             others.append([p.mean().cpu().item()])
-            if True:  # epoch >= args.shift - 1:
-                valid_performance = get_test_performance(args, tokenizer, args.valid_data, model)
 
-                print("task:{}\tseed:{}\tepoch:{}\tvalid_performance:{}\tmethod:{}\tmodel:{}\tmodel:{}".format(
+            valid_performance = get_test_performance(args, tokenizer, args.valid_data, model)
+
+            print("task:{}\tseed:{}\tepoch:{}\tvalid_performance:{}\tmethod:{}\tmodel:{}\tmodel:{}".format(
                     args.task_name, args.seed, epoch,
                     valid_performance, args.method, args.model, args.model))
 
