@@ -1,16 +1,9 @@
 from __future__ import division
-
 import os
-
 import random
 from torch.utils.data import Dataset
-import transformers
 import numpy as np
 import torch
-
-torch.cuda.empty_cache()
-transformers.logging.set_verbosity_error()
-
 
 class bucket_dataset(Dataset):
     def __init__(self, args, tokenizer, source_data_file, target_data_file=None, need_shuffle=False, size=None):
