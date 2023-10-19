@@ -9,8 +9,8 @@ from transformers import BertTokenizer, GPT2Tokenizer
 from models import *
 from utils import *
 
-
 transformers.logging.set_verbosity_error()
+
 
 def freeze_embedding(model):
     for n, p in model.named_parameters():
@@ -50,7 +50,7 @@ def pearson_and_spearman(preds, labels):
 
 
 def get_test_performance(args, tokenizer, data_path, model):
-    task2metric = { 'CoLA': 'mcc', 'SST': 'acc', 'MNLI': 'acc', 'QNLI': 'acc',
+    task2metric = {'CoLA': 'mcc', 'SST': 'acc', 'MNLI': 'acc', 'QNLI': 'acc',
                    'RTE': 'acc', 'QQP': 'f1', "weibo": 'f1'}
 
     metric = task2metric[args.task_name]
@@ -131,7 +131,7 @@ def pac_tuning(args):
 
             _, _, _, loss1 = model(batch)
 
-            if epoch < args.shift:
+            if epoch < args.stage1_epochs:
                 kl = get_kl_term_layer_pb(model, wdecay, p, b)
                 K = fun_K_auto(torch.exp(b.mean()), prior_list, K_list)
                 gamma1_ = K ** (-1) * (2 * (kl + 10 + layers * 3) / args.train_size / 3) ** 0.5
@@ -155,7 +155,7 @@ def pac_tuning(args):
                 # backward
             loss1.mean().backward(retain_graph=True)
             # print('train loss:{}\tpac_loss:{}\tgamma1:{}'.format(loss1.mean().item(),loss2.item(),gamma1_.item()))
-            if epoch < args.shift:
+            if epoch < args.stage1_epochs:
                 # kl_term_backward_mean(loss2, model, p, noises)
                 kl_term_backward(loss2, model, p, noises)
 
@@ -165,14 +165,16 @@ def pac_tuning(args):
             opt1.step()
             update += 1
 
-            if epoch < args.shift:
+            if epoch < args.stage1_epochs:
                 opt2.step()
                 # scheduler2.step(epoch)
                 opt3.step()
                 # scheduler3.step(epoch)
                 if epoch % 1 == 0: print(
-                    "seed:{}\tepoch:{}\tmean of p_pretrain {} mean of p_clf {}".format(args.seed, epoch, p.data[:pretrain_dim].mean().item(),
-                                                                    p.data[pretrain_dim:].mean().item()))
+                    "seed:{}\tepoch:{}\tmean of p_pretrain {} mean of p_clf {}".format(args.seed, epoch, p.data[
+                                                                                                         :pretrain_dim].mean().item(),
+                                                                                       p.data[
+                                                                                       pretrain_dim:].mean().item()))
 
                 # if epoch % 20 == 0: print("valid performance:{}".format(get_test_perform2(args, tokenizer, args.test_data, model)))
 
@@ -183,10 +185,6 @@ def pac_tuning(args):
                 print("task:{}\tseed:{}\tepoch:{}\tvalid_performance:{}\tmethod:{}\tmodel:{}\tmodel:{}".format(
                     args.task_name, args.seed, epoch,
                     valid_performance, args.method, args.model, args.model))
-
-
-
-
 
 
 if __name__ == "__main__":
@@ -236,10 +234,10 @@ if __name__ == "__main__":
     parser.add_argument("--train_data", type=str, default="data/SST/train.txt")
     parser.add_argument("--valid_data", type=str, default="data/SST/dev.txt")
     parser.add_argument("--batch_size", type=int, default=32)
-    parser.add_argument("--train_size",type=int,default=100)
+    parser.add_argument("--train_size", type=int, default=100)
     parser.add_argument("--num_labels", type=int, default=2)
     parser.add_argument('--representation_dim', type=int, default=768)
-    parser.add_argument("--shift", default=50, type=int, help="The number of epochs to shift to noise injection.")
+    parser.add_argument("--stage1_epochs", default=50, type=int, help="The number of epochs for stage 1.")
     parser.add_argument("--K", default=0.03, type=float, help="The default k for loss 2.")
     parser.add_argument("--OPTIM", default='ADAMW', type=str)
     parser.add_argument("--method", default="ours", type=str)
