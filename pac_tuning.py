@@ -178,7 +178,7 @@ def pac_tuning(args):
 
             others.append([p.mean().cpu().item()])
             if True:  # epoch >= args.shift - 1:
-                valid_performance = get_test_performance(args, tokenizer, args.test_data, model)
+                valid_performance = get_test_performance(args, tokenizer, args.valid_data, model)
 
                 print("task:{}\tseed:{}\tepoch:{}\tvalid_performance:{}\tmethod:{}\tmodel:{}\tmodel:{}".format(
                     args.task_name, args.seed, epoch,
