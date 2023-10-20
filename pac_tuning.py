@@ -93,8 +93,8 @@ def pac_tuning(args):
     freeze_embedding(model)
 
     others = []
-    min_gamma = 10
-    max_gamma = 10
+    min_gamma = args.gamma
+    max_gamma = args.gamma
     prior_list, K_list = compute_K_sample_transformer(args, model, tokenizer, args.train_data, min_gamma, max_gamma)
 
     w0, p, layers, pretrain_dim, clf_dim, p_mean_pretrain, p_mean_clf = initialization(args, model)
@@ -214,7 +214,8 @@ if __name__ == "__main__":
     parser.add_argument("--num_labels", type=int, default=2,help="the size of label space, e.g. 2 for sentiment analysis")
     parser.add_argument('--representation_dim', type=int, default=768)
     parser.add_argument("--stage1_epochs", default=200, type=int, help="The number of epochs for stage 1.")
-    parser.add_argument('--model', default='bert-base-uncased', type=str) # gpt2
+    parser.add_argument("--model", default='bert-base-uncased', type=str) # gpt2
+    parser.add_argument("--gamma", default=10, type=int,help='the choice of gamma in the real pac-bayes bound generally choosen from 5~10')
 
     args = parser.parse_args()
 
