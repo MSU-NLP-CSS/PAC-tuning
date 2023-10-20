@@ -20,4 +20,4 @@ python pac_tuning.py  --num_labels 2
 ```
 
 ### Note
-It is better to have a larger batch size for PAC-tuning a Pretrained Languge Model on downstream text classification tasks. Please check the Section **6** in our paper for suggestions about how to use PAC-tuning for your specific tasks.
+It is better to have a larger batch size for PAC-tuning a Pretrained Languge Model on downstream text classification tasks. Please check out the Section **6** in our paper for suggestions about how to use PAC-tuning for your specific tasks.
