@@ -17,6 +17,7 @@ python pac_tuning.py  --num_labels 2
                       --max_epoch 250 
                       --stage1_epochs 200
                       --model bert-base-uncased
+                      --gamma 10
 ```
 
 ### Note
